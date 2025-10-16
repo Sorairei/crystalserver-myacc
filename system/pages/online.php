@@ -60,6 +60,16 @@ $players_data = array();
 $explodeFlags = array();
 $players = 0;
 $data = '';
+
+// Online invocations counter initializer
+$voc_online_count = [
+    'Sorcerer' => 0,
+    'Druid' => 0,
+    'Paladin' => 0,
+    'Knight' => 0,
+	'Monk' => 0,
+];
+
 foreach($playersOnline as $player){
 	$skull = '';
 	if($config['online_skulls'])
@@ -79,6 +89,20 @@ foreach($playersOnline as $player){
 		if((int)$player['promotion'] > 0)
 			$player['vocation'] += ($player['promotion'] * $config['vocations_amount']);
 	}
+
+// Count online invocations based on IDs
+    $vocId = $player['vocation'];
+    if(in_array($vocId, [1, 5])) {
+        $voc_online_count['Sorcerer']++;
+    } elseif(in_array($vocId, [2, 6])) {
+        $voc_online_count['Druid']++;
+    } elseif(in_array($vocId, [3, 7])) {
+        $voc_online_count['Paladin']++;
+    } elseif(in_array($vocId, [4, 8])) {
+        $voc_online_count['Knight']++;
+	} elseif(in_array($vocId, [9, 10])) {
+        $voc_online_count['Monk']++;	
+    }
 
 	$players_data[] = array(
 		'name' => getPlayerLink($player['name']),
@@ -120,6 +144,7 @@ $twig->display('online.html.twig', array(
 	'record' => $record,
 	'current_date' => date('d/m/Y'),
 	'vocs' => isset($vocs) ? $vocs : [],
+    'voc_online_count' => $voc_online_count,  // We pass the counters to the template
 ));
 
 //search bar
